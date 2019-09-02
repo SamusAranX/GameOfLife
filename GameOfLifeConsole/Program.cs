@@ -77,26 +77,29 @@ namespace GameOfLifeConsole
 			gol.Randomize();
 
 			var paused = false;
+			var sb = new StringBuilder();
 			while (true)
 			{
 				Console.Clear();
+				sb.Clear();
 
-				Console.WriteLine(cornerNW + $" Gen. {gol.Generation} ({gol.ActiveCells}/{gol.TotalCells}, {FPS} SPS) ".PadBoth((gol.Size) * 2, lineHorz) + cornerNE);
+				sb.AppendLine(cornerNW + $" Gen. {gol.Generation} ({gol.ActiveCells}/{gol.TotalCells}, {FPS} SPS) ".PadBoth((gol.Size) * 2, lineHorz) + cornerNE);
 				for (var y = 0; y < gol.Size; y++)
 				{
-					Console.Write(lineVert);
+					sb.Append(lineVert);
 					for (var x = 0; x < gol.Size; x++)
 					{
 						var idx = y * gol.Size + x;
-						Console.Write(gol.World[idx] ? block : " ");
-						Console.Write(gol.World[idx] ? block : " ");
+						var nextStr = gol.World[idx] ? block : " ";
+						sb.Append(nextStr + nextStr);
 					}
-					Console.Write(lineVert);
-					Console.WriteLine();
+					sb.Append(lineVert);
+					sb.AppendLine();
 				}
 
 				var pauseBanner = paused ? " (PAUSE) " : "";
-				Console.WriteLine(cornerSW + pauseBanner.PadBoth((gol.Size) * 2, lineHorz) + cornerSE);
+				sb.AppendLine(cornerSW + pauseBanner.PadBoth((gol.Size) * 2, lineHorz) + cornerSE);
+				Console.Write(sb);
 
 				if (Console.KeyAvailable || paused)
 				{
