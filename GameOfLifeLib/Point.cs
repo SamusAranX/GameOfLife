@@ -1,14 +1,12 @@
-﻿using System;
-
-namespace GameOfLifeLib
+﻿namespace GameOfLifeLib
 {
 	/* Compatibility shim since System.Windows isn't a thing here */
 	public struct Point
 	{
-		public double X;
-		public double Y;
+		public int X;
+		public int Y;
 
-		public Point(double x, double y)
+		public Point(int x, int y)
 		{
 			this.X = x;
 			this.Y = y;

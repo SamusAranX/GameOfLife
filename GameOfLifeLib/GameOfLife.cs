@@ -18,13 +18,12 @@ namespace GameOfLifeLib
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
-		private bool SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+		private void SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
 		{
-			if (EqualityComparer<T>.Default.Equals(field, value))
-				return false;
+			if (EqualityComparer<T>.Default.Equals(field, value)) return;
+
 			field = value;
 			this.OnPropertyChanged(propertyName);
-			return true;
 		}
 
 		#endregion
@@ -33,12 +32,6 @@ namespace GameOfLifeLib
 		private int _generation;
 		private bool[] _world;
 		private bool[] _nextgen;
-
-		public enum QueryMode
-		{
-			World,
-			NextGen
-		}
 
 		public int Size
 		{
@@ -122,57 +115,42 @@ namespace GameOfLifeLib
 				var x = r.Next(this.Size);
 				var y = r.Next(this.Size);
 
-				var idx = (int)(y * this.Size + x);
+				var idx = y * this.Size + x;
 				newWorld[idx] = true;
 			}
 			this.World = newWorld;
 		}
 
-		private bool GetCell(Point p, QueryMode qm = QueryMode.World)
+		private bool GetCell(int x, int y, bool nextGen = false)
 		{
-			var idx = (int)(p.Y * this.Size + p.X);
-
-			if (qm == QueryMode.NextGen)
-				return this.NextGen[idx];
-
-			return this.World[idx];
+			var idx = y * this.Size + x;
+			return nextGen ? this.NextGen[idx] : this.World[idx];
 		}
 
-		private bool GetCell(int x, int y, QueryMode qm = QueryMode.World)
+		private void SetCell(Point p, bool newValue, bool nextGen = false, bool propertyChanged = true)
 		{
-			var p = new Point { X = x, Y = y };
-			return this.GetCell(p, qm);
-		}
+			var idx = p.Y * this.Size + p.X;
 
-		private bool GetCell(double x, double y, QueryMode qm = QueryMode.World)
-		{
-			var p = new Point { X = x, Y = y };
-			return this.GetCell(p, qm);
-		}
-
-		public void SetCell(Point p, bool val = true, QueryMode qm = QueryMode.World)
-		{
-			var idx = (int)(p.Y * this.Size + p.X);
-
-			if (qm == QueryMode.NextGen)
-				this.NextGen[idx] = val;
+			if (nextGen)
+				this.NextGen[idx] = newValue;
 			else
-				this.World[idx] = val;
+				this.World[idx] = newValue;
 
-			this.OnPropertyChanged("ActiveCells");
+			if (propertyChanged)
+				this.OnPropertyChanged("ActiveCells");
 		}
 
-		private void SetCell(int x, int y, bool val = true, QueryMode qm = QueryMode.World)
+		public void SetCell(int x, int y, bool newValue, bool nextGen = false, bool propertyChanged = true)
 		{
-			var p = new Point { X = x, Y = y };
-			this.SetCell(p, val, qm);
+			var p = new Point(x, y);
+			this.SetCell(p, newValue, nextGen, propertyChanged);
 		}
 
-		public void ToggleCell(Point p, QueryMode qm = QueryMode.World)
+		public void ToggleCell(Point p, bool nextGen = false)
 		{
-			var idx = (int)(p.Y * this.Size + p.X);
+			var idx = p.Y * this.Size + p.X;
 
-			if (qm == QueryMode.NextGen)
+			if (nextGen)
 				this.NextGen[idx] = !this.NextGen[idx];
 			else
 				this.World[idx] = !this.World[idx];
@@ -180,18 +158,12 @@ namespace GameOfLifeLib
 			this.OnPropertyChanged("ActiveCells");
 		}
 
-		public void ToggleCell(int x, int y, QueryMode qm = QueryMode.World)
-		{
-			var p = new Point { X = x, Y = y };
-			this.ToggleCell(p, qm);
-		}
-
-		private bool IsNeighborAlive(Point p, Point offset)
+		private bool IsNeighborAlive(int x, int y, int offsetX, int offsetY)
 		{
 			var result = false;
 
-			var newX = p.X + offset.X;
-			var newY = p.Y + offset.Y;
+			var newX = x + offsetX;
+			var newY = y + offsetY;
 
 			if (newX >= 0 && newX < this.Size && newY >= 0 && newY < this.Size)
 			{
@@ -206,51 +178,34 @@ namespace GameOfLifeLib
 			var x = idx % this.Size;
 			var y = idx / this.Size;
 
-			var neighbors = 0;
-
+			byte neighbors = 0;
 			foreach (var o in this._offsets)
 			{
-				neighbors += this.IsNeighborAlive(new Point() { X = x, Y = y }, o) ? 1 : 0;
+				if (this.IsNeighborAlive(x, y, o.X, o.Y))
+					neighbors++;
 			}
 
 			var isAlive = this.GetCell(x, y);
-			var stillAlive = false;
 
-			// Fall 1: Eine tote Zelle mit genau 3 lebenden Nachbarn
-			// wird in der Folgegeneration neu geboren
-			if (!isAlive && neighbors == 3)
-				stillAlive = true;
+			// Rules according to Wikipedia: https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life#Rules 
+			// Rule 2: Any live cell with two or three live neighbours lives on to the next generation.
+			var stillAlive = isAlive && (neighbors == 2 || neighbors == 3);
 
-			// Fall 3: Eine lebende Zelle mit 2 oder 3 lebenden Nachbarn
-			// bleibt in der Folgegeneration am Leben
-			if (isAlive && (neighbors == 2 || neighbors == 3))
-				stillAlive = true;
+			// Rule 4: Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
+			stillAlive |= !isAlive && neighbors == 3;
 
-			// Fälle 2 und 4 werden implizit schon vom Code behandelt
+			// Rules 1 and 3 get handled implicitly
 
-			this.SetCell(x, y, stillAlive, QueryMode.NextGen);
+			this.SetCell(new Point(x, y), stillAlive, true, false);
 		}
 
-		private void Generate()
+		[Obsolete("Slow. Use UpdateAsync() instead.")]
+		public void Update()
 		{
-			for (var idx = 0; idx < this.Size * this.Size; idx++)
+			for (var idx = 0; idx < this.TotalCells; idx++)
 				this.GenerationStep(idx);
 
 			this.Generation++;
-		}
-
-		private Task GenerateAsync()
-		{
-			return Task.Factory.StartNew(() =>
-			{
-				Parallel.For(0, this.Size * this.Size, idx => this.GenerationStep(idx));
-				this.Generation++;
-			});
-		}
-
-		public void Update()
-		{
-			this.Generate();
 
 			var swap = this.NextGen;
 			this.NextGen = this.World;
@@ -259,7 +214,13 @@ namespace GameOfLifeLib
 
 		public async Task UpdateAsync()
 		{
-			await this.GenerateAsync();
+			await Task.Factory.StartNew(() =>
+			{
+				Parallel.For(0, this.TotalCells, this.GenerationStep);
+			});
+			this.Generation++;
+
+			this.OnPropertyChanged("ActiveCells");
 
 			var swap = this.NextGen;
 			this.NextGen = this.World;

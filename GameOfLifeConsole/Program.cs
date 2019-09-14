@@ -50,17 +50,17 @@ namespace GameOfLifeConsole
 					{
 						switch (ch)
 						{
-						case 0:
-							Console.Write("  ");
-							break;
-						case 1:
-							Console.Write(block + block);
-							break;
-						case 2:
-							Console.ForegroundColor = ConsoleColor.Red;
-							Console.Write(block + block);
-							Console.ResetColor();
-							break;
+							case 0:
+								Console.Write("  ");
+								break;
+							case 1:
+								Console.Write(block + block);
+								break;
+							case 2:
+								Console.ForegroundColor = ConsoleColor.Red;
+								Console.Write(block + block);
+								Console.ResetColor();
+								break;
 						}
 					}
 					else if (ch is char)
@@ -71,7 +71,7 @@ namespace GameOfLifeConsole
 				Console.WriteLine();
 			}
 
-			var size = input.InputInt32("Gib die Spielfeldgröße ein", 16, 32);
+			var size = input.InputInt32("Enter desired board size", 16, 32);
 
 			var gol = new GameOfLife(size);
 			gol.Randomize();
@@ -97,7 +97,7 @@ namespace GameOfLifeConsole
 					sb.AppendLine();
 				}
 
-				var pauseBanner = paused ? " (PAUSE) " : "";
+				var pauseBanner = paused ? " (PAUSED) " : "";
 				sb.AppendLine(cornerSW + pauseBanner.PadBoth((gol.Size) * 2, lineHorz) + cornerSE);
 				Console.Write(sb);
 
@@ -107,15 +107,15 @@ namespace GameOfLifeConsole
 					if (key == ConsoleKey.Escape || key == ConsoleKey.Q)
 					{
 						// Q = quit
-						break; // Bricht die umschließende while-Schleife ab
+						break; // Breaks outer while loop
 					}
 
 					if (key == ConsoleKey.E && paused)
 					{
 						// E = edit cell
-						var cellCoord = input.InputPoint("Gib die X/Y-Koordinaten für die umzuschaltende Zelle ein");
+						var cellCoord = input.InputPoint("Enter X/Y coordinates to toggle a cell");
 						gol.ToggleCell(cellCoord);
-						continue; // überspringt den Rest des Schleifeninhalts
+						continue;
 					}
 
 					if (key == ConsoleKey.R)
@@ -129,14 +129,14 @@ namespace GameOfLifeConsole
 					{
 						// S = simulation speed
 						string[] speedPromptArr = {
-							"Gib die neue Anzahl von gewünschten Simulationsschritten pro Sekunde ein",
-							"Echte Geschwindigkeit kann abweichen, die Windows-Konsole ist langsam"
+							"Enter the new desired number of updates per second",
+							"Actual speed may vary. The Windows console is slow"
 						};
 						var speedPrompt = string.Join("\n", speedPromptArr);
 
 						Console.Clear();
 						FPS = input.InputInt32(speedPrompt, 1, 30);
-						continue; // überspringt den Rest des Schleifeninhalts
+						continue;
 					}
 
 					if (key == ConsoleKey.C)
@@ -146,15 +146,14 @@ namespace GameOfLifeConsole
 					}
 					else if (key == ConsoleKey.Spacebar)
 					{
-						// Simulation pausieren/fortsetzen
+						// Pause/Resume simulation
 						paused = !paused;
 					}
 				}
 
-				// Berechne das nächste Spielfeld zwar parallel, blockiere aber, bis die Methode fertig ist
 				gol.UpdateAsync().Wait();
 
-				// Dafür sorgen, dass die x Schritte pro Sekunde eingehalten werden
+				// Make sure the app runs at FPS steps per second
 				Thread.Sleep(1000 / FPS);
 			}
 		}
