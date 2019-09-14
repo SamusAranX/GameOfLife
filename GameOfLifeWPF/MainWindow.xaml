@@ -1,0 +1,133 @@
+﻿<Window x:Class="GameOfLifeWPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GameOfLifeWPF" xmlns:conv="clr-namespace:GameOfLifeWPF.Converters"
+        mc:Ignorable="d" Title="Game of Life"
+        Typography.NumeralAlignment="Tabular" Typography.SlashedZero="True" Typography.NumeralStyle="Lining"
+		UseLayoutRounding="True" Closing="Window_Closing" RenderOptions.CachingHint="Cache"
+		SizeToContent="WidthAndHeight" ResizeMode="NoResize">
+	<Window.Resources>
+		<conv:InvertBooleanConverter x:Key="InvertBoolConv" />
+	</Window.Resources>
+	<StackPanel Margin="8">
+		<Border BorderBrush="Black" BorderThickness="1" Width="514" Height="514">
+			<Grid>
+				<Image Source="{Binding GOLSource}"
+                            RenderOptions.BitmapScalingMode="NearestNeighbor" />
+				<Canvas x:Name="GOLCanvas" Background="#01FFFFFF" 
+				            MouseDown="GOLCanvas_MouseDown" MouseUp="GOLCanvas_MouseUp"
+				            MouseMove="GOLCanvas_MouseMove"/>
+			</Grid>
+		</Border>
+
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="48" />
+				<ColumnDefinition />
+				<ColumnDefinition Width="48" />
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="28" />
+				<RowDefinition Height="28" />
+				<RowDefinition Height="28" />
+			</Grid.RowDefinitions>
+
+			<Grid Grid.Column="1">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition />
+					<ColumnDefinition />
+				</Grid.ColumnDefinitions>
+
+				<Border Grid.Column="0" Background="Black" CornerRadius="4" Padding="0,2" Width="135"
+				        HorizontalAlignment="Center" VerticalAlignment="Center">
+					<TextBlock TextAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="14">
+						<Run>Generation</Run>
+						<Run FontWeight="Medium" Text="{Binding GoL.Generation, Mode=OneWay, FallbackValue=600000}" />
+					</TextBlock>
+				</Border>
+
+				<Border Grid.Column="1" Background="Black" CornerRadius="4" Padding="0,2" Width="190"
+				        HorizontalAlignment="Center" VerticalAlignment="Center">
+					<TextBlock TextAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="14">
+						<Run>Active Cells:</Run>
+						<Run FontWeight="Medium" Text="{Binding GoL.ActiveCells, Mode=OneWay, FallbackValue=250000}" />
+						<Run>/</Run>
+						<Run Text="{Binding GoL.TotalCells, Mode=OneWay, FallbackValue=654535}" />
+					</TextBlock>
+				</Border>
+			</Grid>
+
+			<Label Grid.Row="1" Content="Size" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" />
+			<Slider x:Name="SizeSlider" Grid.Column="1" Grid.Row="1" 
+			        VerticalAlignment="Center" IsSnapToTickEnabled="True" TickPlacement="BottomRight"
+			        LargeChange="8" SmallChange="2" MouseWheel="SizeSlider_Scroll"
+			        Maximum="512" Minimum="16" TickFrequency="2"
+			        Value="{Binding CanvasSize, FallbackValue=128}"
+			        IsEnabled="{Binding SimulationRunning, Converter={StaticResource InvertBoolConv}}" />
+			<Label Grid.Column="2" Grid.Row="1" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+			       Content="{Binding ElementName=SizeSlider, Path=Value}" ContentStringFormat="{}{0}²" />
+
+			<Label Grid.Row="2" Content="Speed" HorizontalContentAlignment="Center" />
+			<Slider x:Name="SpeedSlider" Grid.Column="1" Grid.Row="2" 
+				VerticalAlignment="Center" IsSnapToTickEnabled="True" TickPlacement="BottomRight"
+				LargeChange="1" SmallChange="0.25" MouseWheel="SizeSlider_Scroll"
+				Maximum="4" Minimum="0.25" TickFrequency="0.25"
+				Value="{Binding SimSpeedFactor, FallbackValue=2}" />
+			<Label Grid.Column="2" Grid.Row="2" HorizontalContentAlignment="Center" 
+				Content="{Binding ElementName=SpeedSlider, Path=Value}" ContentStringFormat="{}{0:N2}×" />
+		</Grid>
+
+		<Grid Margin="0,8,0,0">
+			<Grid.RowDefinitions>
+				<RowDefinition Height="32" />
+				<RowDefinition Height="4" />
+				<RowDefinition Height="32"/>
+				<RowDefinition Height="4" />
+				<RowDefinition Height="32" />
+			</Grid.RowDefinitions>
+
+			<Grid Grid.Row="0">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition />
+					<ColumnDefinition Width="4" />
+					<ColumnDefinition />
+					<ColumnDefinition Width="4" />
+					<ColumnDefinition />
+				</Grid.ColumnDefinitions>
+
+				<Button Click="ButtonStart_Click" Content="▶ Start"
+				IsEnabled="{Binding SimulationRunning, Converter={StaticResource InvertBoolConv}}" />
+				<Button Click="ButtonStep_Click" Grid.Column="2" Content="⏭ Step"
+				IsEnabled="{Binding SimulationRunning, Converter={StaticResource InvertBoolConv}}"/>
+				<Button Click="ButtonStop_Click" Grid.Column="4" Content="■ Stop"
+				IsEnabled="{Binding SimulationRunning}" />
+			</Grid>
+
+			<Grid Grid.Row="2">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition />
+					<ColumnDefinition Width="4" />
+					<ColumnDefinition />
+				</Grid.ColumnDefinitions>
+
+				<Button Click="ButtonRandomize_Click" Grid.Column="0" Content="🔀 Randomize Board"
+                        IsEnabled="{Binding SimulationRunning, Converter={StaticResource InvertBoolConv}}"/>
+				<Button Click="ButtonClear_Click" Grid.Column="2" Content="🔄 Clear Board"
+                        IsEnabled="{Binding SimulationRunning, Converter={StaticResource InvertBoolConv}}"/>
+			</Grid>
+
+			<Grid Grid.Row="4">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition />
+					<ColumnDefinition Width="4" />
+					<ColumnDefinition />
+				</Grid.ColumnDefinitions>
+
+				<Button Click="ButtonImport_Click" Grid.Column="0" Content="📂 Import Image" />
+				<Button Click="ButtonExport_Click" Grid.Column="2" Content="💾 Export Image" />
+			</Grid>
+		</Grid>
+	</StackPanel>
+</Window>
