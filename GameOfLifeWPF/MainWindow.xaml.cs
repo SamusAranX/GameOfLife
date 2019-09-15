@@ -179,7 +179,7 @@ namespace GameOfLifeWPF
 
 		private void ButtonClear_Click(object sender, RoutedEventArgs e)
 		{
-			this.GoL.Clear();
+			this.GoL.Reset();
 			this.UpdateImage();
 		}
 

@@ -87,15 +87,11 @@ namespace GameOfLifeLib
 			this.Resize(size);
 		}
 
-		public void Clear()
+		public void Reset()
 		{
 			this.World = new bool[this.TotalCells];
 			this.NextGen = new bool[this.TotalCells];
-		}
 
-		public void Reset()
-		{
-			this.Clear();
 			this.Generation = 1;
 		}
 

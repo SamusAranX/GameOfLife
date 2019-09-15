@@ -15,7 +15,11 @@
 		<Border BorderBrush="Black" BorderThickness="1" Width="514" Height="514">
 			<Grid>
 				<Image Source="{Binding GOLSource}"
-                            RenderOptions.BitmapScalingMode="NearestNeighbor" />
+				       RenderOptions.BitmapScalingMode="NearestNeighbor">
+					<Image.Effect>
+						<DropShadowEffect BlurRadius="8" Color="Black" RenderingBias="Quality" Direction="270" ShadowDepth="2" Opacity="0.66" />
+					</Image.Effect>
+				</Image>
 				<Canvas x:Name="GOLCanvas" Background="#01FFFFFF" 
 				            MouseDown="GOLCanvas_MouseDown" MouseUp="GOLCanvas_MouseUp"
 				            MouseMove="GOLCanvas_MouseMove" />
@@ -41,7 +45,8 @@
 					<ColumnDefinition />
 				</Grid.ColumnDefinitions>
 
-				<Border Grid.Column="0" Background="Black" CornerRadius="4" Padding="0,2" Width="135"
+				<Border Grid.Column="0" Background="Black" CornerRadius="4" 
+				        Width="135" Height="24"
 				        HorizontalAlignment="Center" VerticalAlignment="Center">
 					<TextBlock TextAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="14">
 						<Run>Generation</Run>
@@ -49,11 +54,8 @@
 					</TextBlock>
 				</Border>
 
-				<CheckBox Grid.Column="2" Content="Wrap Around" IsEnabled="{Binding SimulationRunning, Converter={StaticResource InvertBoolConv}}"
-							  FontSize="14" IsChecked="{Binding GoL.WrapAround}"
-				              HorizontalAlignment="Center" VerticalContentAlignment="Center" />
-
-				<Border Grid.Column="1" Background="Black" CornerRadius="4" Padding="0,2" Width="164"
+				<Border Grid.Column="1" Background="Black" CornerRadius="4"
+				        Width="164" Height="24"
 				        HorizontalAlignment="Center" VerticalAlignment="Center">
 					<TextBlock TextAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="14">
 						<Run>Active:</Run>
@@ -62,13 +64,23 @@
 						<Run Text="{Binding GoL.TotalCells, Mode=OneWay, FallbackValue=654535}" />
 					</TextBlock>
 				</Border>
+
+				<Border Grid.Column="2" Background="Black" CornerRadius="4"
+						Width="114" Height="24" VerticalAlignment="Center" HorizontalAlignment="Center">
+					<CheckBox Content="Wrap Around" IsChecked="{Binding GoL.WrapAround}"
+					          IsEnabled="{Binding SimulationRunning, Converter={StaticResource InvertBoolConv}}"
+					          FontSize="14" FontWeight="Medium" Foreground="White" Padding="3,0,0,0"
+					          HorizontalContentAlignment="Center" VerticalContentAlignment="Center" 
+					          HorizontalAlignment="Center" VerticalAlignment="Center" />
+				</Border>
+				
 			</Grid>
 
 			<Label Grid.Row="1" Content="Size" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" />
 			<Slider x:Name="SizeSlider" Grid.Column="1" Grid.Row="1" 
 			        VerticalAlignment="Center" IsSnapToTickEnabled="True" TickPlacement="BottomRight"
 			        LargeChange="8" SmallChange="2" MouseWheel="SizeSlider_Scroll"
-			        Maximum="512" Minimum="16" TickFrequency="2"
+			        Maximum="512" Minimum="8" TickFrequency="2"
 			        Value="{Binding CanvasSize, FallbackValue=128}"
 			        IsEnabled="{Binding SimulationRunning, Converter={StaticResource InvertBoolConv}}" />
 			<Label Grid.Column="2" Grid.Row="1" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
@@ -78,7 +90,7 @@
 			<Slider x:Name="SpeedSlider" Grid.Column="1" Grid.Row="2" 
 				VerticalAlignment="Center" IsSnapToTickEnabled="True" TickPlacement="BottomRight"
 				LargeChange="1" SmallChange="0.25" MouseWheel="SizeSlider_Scroll"
-				Maximum="4" Minimum="0.25" TickFrequency="0.25"
+				Maximum="8" Minimum="0.25" TickFrequency="0.25"
 				Value="{Binding SimSpeedFactor, FallbackValue=2}" />
 			<Label Grid.Column="2" Grid.Row="2" HorizontalContentAlignment="Center" 
 				Content="{Binding ElementName=SpeedSlider, Path=Value}" ContentStringFormat="{}{0:N2}×" />
