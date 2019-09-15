@@ -65,6 +65,8 @@ namespace GameOfLifeLib
 			set => this.SetField(ref this._nextgen, value);
 		}
 
+		public bool WrapAround { get; set; }
+
 		public int TotalCells => this.Size * this.Size;
 
 		public int ActiveCells => this.World.Count(c => c);
@@ -158,19 +160,29 @@ namespace GameOfLifeLib
 			this.OnPropertyChanged("ActiveCells");
 		}
 
+		// better implementation of the modulo operator because the default C# implementation is broken and unusable
+		private int Mod(int i, int m)
+		{
+			return (i % m + m) % m;
+		}
+
 		private bool IsNeighborAlive(int x, int y, int offsetX, int offsetY)
 		{
-			var result = false;
-
 			var newX = x + offsetX;
 			var newY = y + offsetY;
 
-			if (newX >= 0 && newX < this.Size && newY >= 0 && newY < this.Size)
+			if (!this.WrapAround && (newX < 0 || newX >= this.Size || newY < 0 || newY >= this.Size))
 			{
-				result = this.GetCell(newX, newY);
+				return false;
 			}
 
-			return result;
+			if (this.WrapAround)
+			{
+				newX = this.Mod(newX, this.Size);
+				newY = this.Mod(newY, this.Size);
+			}
+
+			return this.GetCell(newX, newY);
 		}
 
 		private void GenerationStep(int idx)

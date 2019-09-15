@@ -18,11 +18,11 @@
                             RenderOptions.BitmapScalingMode="NearestNeighbor" />
 				<Canvas x:Name="GOLCanvas" Background="#01FFFFFF" 
 				            MouseDown="GOLCanvas_MouseDown" MouseUp="GOLCanvas_MouseUp"
-				            MouseMove="GOLCanvas_MouseMove"/>
+				            MouseMove="GOLCanvas_MouseMove" />
 			</Grid>
 		</Border>
 
-		<Grid>
+		<Grid Margin="0,4,0,8">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="48" />
 				<ColumnDefinition />
@@ -34,8 +34,9 @@
 				<RowDefinition Height="28" />
 			</Grid.RowDefinitions>
 
-			<Grid Grid.Column="1">
+			<Grid Column="0" ColumnSpan="3" Margin="24,0">
 				<Grid.ColumnDefinitions>
+					<ColumnDefinition />
 					<ColumnDefinition />
 					<ColumnDefinition />
 				</Grid.ColumnDefinitions>
@@ -48,10 +49,14 @@
 					</TextBlock>
 				</Border>
 
-				<Border Grid.Column="1" Background="Black" CornerRadius="4" Padding="0,2" Width="190"
+				<CheckBox Grid.Column="2" Content="Wrap Around" IsEnabled="{Binding SimulationRunning, Converter={StaticResource InvertBoolConv}}"
+							  FontSize="14" IsChecked="{Binding GoL.WrapAround}"
+				              HorizontalAlignment="Center" VerticalContentAlignment="Center" />
+
+				<Border Grid.Column="1" Background="Black" CornerRadius="4" Padding="0,2" Width="164"
 				        HorizontalAlignment="Center" VerticalAlignment="Center">
 					<TextBlock TextAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="14">
-						<Run>Active Cells:</Run>
+						<Run>Active:</Run>
 						<Run FontWeight="Medium" Text="{Binding GoL.ActiveCells, Mode=OneWay, FallbackValue=250000}" />
 						<Run>/</Run>
 						<Run Text="{Binding GoL.TotalCells, Mode=OneWay, FallbackValue=654535}" />
@@ -79,7 +84,7 @@
 				Content="{Binding ElementName=SpeedSlider, Path=Value}" ContentStringFormat="{}{0:N2}×" />
 		</Grid>
 
-		<Grid Margin="0,8,0,0">
+		<Grid>
 			<Grid.RowDefinitions>
 				<RowDefinition Height="32" />
 				<RowDefinition Height="4" />

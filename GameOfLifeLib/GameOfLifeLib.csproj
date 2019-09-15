@@ -4,8 +4,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <ReleaseVersion>1.1</ReleaseVersion>
     <Platforms>x64</Platforms>
-    <AssemblyVersion>1.1.0.0</AssemblyVersion>
-    <Version>1.1.0</Version>
+    <AssemblyVersion>1.2.0.0</AssemblyVersion>
+    <Version>1.2.0</Version>
+    <FileVersion>1.2.0.0</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

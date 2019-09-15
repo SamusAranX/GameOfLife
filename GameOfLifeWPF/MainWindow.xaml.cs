@@ -282,6 +282,9 @@ namespace GameOfLifeWPF
 		private void GOLCanvas_MouseDown(object sender, MouseButtonEventArgs e)
 		{
 			this.CanvasActive = true;
+
+			// ensure a simple click adds/removes pixels as well
+			this.GOLCanvas_MouseMove(sender, e);
 		}
 
 		private void GOLCanvas_MouseUp(object sender, MouseButtonEventArgs e)
