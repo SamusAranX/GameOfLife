@@ -29,7 +29,7 @@ namespace GameOfLifeUWP
         public App()
         {
             this.InitializeComponent();
-            this.Suspending += OnSuspending;
+            this.Suspending += this.OnSuspending;
         }
 
         /// <summary>
@@ -39,27 +39,25 @@ namespace GameOfLifeUWP
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
-            Frame rootFrame = Window.Current.Content as Frame;
+			// Do not repeat app initialization when the Window already has content,
+			// just ensure that the window is active
+			if (!(Window.Current.Content is Frame rootFrame))
+			{
+				// Create a Frame to act as the navigation context and navigate to the first page
+				rootFrame = new Frame();
 
-            // Do not repeat app initialization when the Window already has content,
-            // just ensure that the window is active
-            if (rootFrame == null)
-            {
-                // Create a Frame to act as the navigation context and navigate to the first page
-                rootFrame = new Frame();
+				rootFrame.NavigationFailed += this.OnNavigationFailed;
 
-                rootFrame.NavigationFailed += OnNavigationFailed;
+				if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
+				{
+					// TODO: Load state from previously suspended application
+				}
 
-                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
-                {
-                    //TODO: Load state from previously suspended application
-                }
+				// Place the frame in the current Window
+				Window.Current.Content = rootFrame;
+			}
 
-                // Place the frame in the current Window
-                Window.Current.Content = rootFrame;
-            }
-
-            if (e.PrelaunchActivated == false)
+			if (e.PrelaunchActivated == false)
             {
                 if (rootFrame.Content == null)
                 {
@@ -78,7 +76,7 @@ namespace GameOfLifeUWP
         /// </summary>
         /// <param name="sender">The Frame which failed navigation</param>
         /// <param name="e">Details about the navigation failure</param>
-        void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
+        private void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
             throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
         }
@@ -93,7 +91,12 @@ namespace GameOfLifeUWP
         private void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
-            //TODO: Save application state and stop any background activity
+
+            if (Window.Current.Content is Frame frame && frame.Content is MainPage mainPage)
+            {
+				// TODO: stop the simulation here
+            }
+
             deferral.Complete();
         }
     }
