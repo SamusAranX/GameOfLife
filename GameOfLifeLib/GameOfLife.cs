@@ -131,10 +131,9 @@ namespace GameOfLifeLib
 			this.World = newWorld;
 		}
 
-		private bool GetCell(int x, int y, bool nextGen = false)
+		private bool GetWorldCell(int x, int y)
 		{
-			var idx = y * this.Size.Width + x;
-			return nextGen ? this.NextGen[idx] : this.World[idx];
+			return this.World[y * this.Size.Width + x];
 		}
 
 		private void SetCell(Point p, bool newValue, bool nextGen = false, bool propertyChanged = true)
@@ -171,7 +170,8 @@ namespace GameOfLifeLib
 		// better implementation of the modulo operator because the default C# implementation is broken and unusable
 		private static int Mod(int i, int m)
 		{
-			return (i % m + m) % m;
+			var r = i % m;
+			return r < 0 ? r + m : r;
 		}
 
 		private bool IsNeighborAlive(int x, int y, int offsetX, int offsetY)
@@ -183,12 +183,12 @@ namespace GameOfLifeLib
 				return false;
 
 			if (!this.WrapAround) 
-				return this.GetCell(newX, newY);
+				return this.GetWorldCell(newX, newY);
 
 			newX = Mod(newX, this.Size.Width);
 			newY = Mod(newY, this.Size.Height);
 
-			return this.GetCell(newX, newY);
+			return this.GetWorldCell(newX, newY);
 		}
 
 		private void GenerationStep(int idx)
@@ -203,7 +203,7 @@ namespace GameOfLifeLib
 					neighbors++;
 			}
 
-			var isAlive = this.GetCell(x, y);
+			var isAlive = this.GetWorldCell(x, y);
 
 			// Rules according to Wikipedia: https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life#Rules 
 			// Rule 2: Any live cell with two or three live neighbours lives on to the next generation.
@@ -215,19 +215,6 @@ namespace GameOfLifeLib
 			// Rules 1 and 3 get handled implicitly
 
 			this.SetCell(new Point(x, y), stillAlive, true, false);
-		}
-
-		[Obsolete("Slow. Use UpdateAsync() instead.")]
-		public void Update()
-		{
-			for (var idx = 0; idx < this.TotalCells; idx++)
-				this.GenerationStep(idx);
-
-			this.Generation++;
-
-			var swap = this.NextGen;
-			this.NextGen = this.World;
-			this.World = swap;
 		}
 
 		public async Task UpdateAsync()
