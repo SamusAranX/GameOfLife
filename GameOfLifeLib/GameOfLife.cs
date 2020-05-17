@@ -15,7 +15,7 @@ namespace GameOfLifeLib
 
 		private void OnPropertyChanged(string propertyName)
 		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
 		private void SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
@@ -28,12 +28,13 @@ namespace GameOfLifeLib
 
 		#endregion
 
-		private int _size;
+		private FieldSize _size;
+
 		private int _generation;
 		private bool[] _world;
 		private bool[] _nextgen;
 
-		public int Size
+		public FieldSize Size
 		{
 			get => this._size;
 			private set
@@ -67,7 +68,7 @@ namespace GameOfLifeLib
 
 		public bool WrapAround { get; set; }
 
-		public int TotalCells => this.Size * this.Size;
+		public int TotalCells => this.Size.Width * this.Size.Height;
 
 		public int ActiveCells => this.World.Count(c => c);
 
@@ -82,9 +83,14 @@ namespace GameOfLifeLib
 			new Point { X = -1, Y = -1 }
 		};
 
-		public GameOfLife(int size)
+		public GameOfLife(FieldSize size)
 		{
 			this.Resize(size);
+		}
+
+		public GameOfLife(ushort size)
+		{
+			this.Resize(new FieldSize(size, size));
 		}
 
 		public void Reset()
@@ -95,9 +101,15 @@ namespace GameOfLifeLib
 			this.Generation = 1;
 		}
 
-		public void Resize(int newSize)
+		public void Resize(FieldSize newSize)
 		{
 			this.Size = newSize;
+			this.Reset();
+		}
+
+		public void Resize(ushort newSize)
+		{
+			this.Size = new FieldSize(newSize, newSize);
 			this.Reset();
 		}
 
@@ -110,10 +122,10 @@ namespace GameOfLifeLib
 			var num = this.TotalCells * fraction;
 			for (var i = 0; i < num; i++)
 			{
-				var x = r.Next(this.Size);
-				var y = r.Next(this.Size);
+				var x = r.Next(this.Size.Width);
+				var y = r.Next(this.Size.Height);
 
-				var idx = y * this.Size + x;
+				var idx = y * this.Size.Width + x;
 				newWorld[idx] = true;
 			}
 			this.World = newWorld;
@@ -121,13 +133,13 @@ namespace GameOfLifeLib
 
 		private bool GetCell(int x, int y, bool nextGen = false)
 		{
-			var idx = y * this.Size + x;
+			var idx = y * this.Size.Width + x;
 			return nextGen ? this.NextGen[idx] : this.World[idx];
 		}
 
 		private void SetCell(Point p, bool newValue, bool nextGen = false, bool propertyChanged = true)
 		{
-			var idx = p.Y * this.Size + p.X;
+			var idx = p.Y * this.Size.Width + p.X;
 
 			if (nextGen)
 				this.NextGen[idx] = newValue;
@@ -146,7 +158,7 @@ namespace GameOfLifeLib
 
 		public void ToggleCell(Point p, bool nextGen = false)
 		{
-			var idx = p.Y * this.Size + p.X;
+			var idx = p.Y * this.Size.Width + p.X;
 
 			if (nextGen)
 				this.NextGen[idx] = !this.NextGen[idx];
@@ -157,7 +169,7 @@ namespace GameOfLifeLib
 		}
 
 		// better implementation of the modulo operator because the default C# implementation is broken and unusable
-		private int Mod(int i, int m)
+		private static int Mod(int i, int m)
 		{
 			return (i % m + m) % m;
 		}
@@ -167,24 +179,22 @@ namespace GameOfLifeLib
 			var newX = x + offsetX;
 			var newY = y + offsetY;
 
-			if (!this.WrapAround && (newX < 0 || newX >= this.Size || newY < 0 || newY >= this.Size))
-			{
+			if (!this.WrapAround && (newX < 0 || newX >= this.Size.Width || newY < 0 || newY >= this.Size.Height))
 				return false;
-			}
 
-			if (this.WrapAround)
-			{
-				newX = this.Mod(newX, this.Size);
-				newY = this.Mod(newY, this.Size);
-			}
+			if (!this.WrapAround) 
+				return this.GetCell(newX, newY);
+
+			newX = Mod(newX, this.Size.Width);
+			newY = Mod(newY, this.Size.Height);
 
 			return this.GetCell(newX, newY);
 		}
 
 		private void GenerationStep(int idx)
 		{
-			var x = idx % this.Size;
-			var y = idx / this.Size;
+			var x = idx % this.Size.Width;
+			var y = idx / this.Size.Width;
 
 			byte neighbors = 0;
 			foreach (var o in this._offsets)

@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -25,7 +26,7 @@ namespace GameOfLifeWPF
 
 		private void OnPropertyChanged(string propertyName)
 		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+			this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
 		private void SetField<T>(ref T field, T value, [CallerMemberName]string propertyName = null)
@@ -54,19 +55,22 @@ namespace GameOfLifeWPF
 			get => this._simSpeedFactor;
 			set
 			{
+				if (Math.Abs(this._simSpeedFactor - value) < 0.001)
+					return;
+
 				this.SetField(ref this._simSpeedFactor, value);
-				this._timer?.Change(0, (int)(TimerInitialSpeed / value));
+				this._timer?.Change(0, (int)(TIMER_INITIAL_SPEED / value));
 			}
 		}
 
-		private int _canvassize = 128;
-		public int CanvasSize
+		private ushort _canvasSize = 128;
+		public ushort CanvasSize
 		{
-			get => this._canvassize;
+			get => this._canvasSize;
 			set
 			{
-				this.SetField(ref this._canvassize, value);
-				this.ResizeHelper(value);
+				this.SetField(ref this._canvasSize, value);
+				this.ResizeAndRandomize(value);
 			}
 		}
 
@@ -79,9 +83,12 @@ namespace GameOfLifeWPF
 			set => this.SetField(ref this._golsource, value);
 		}
 
+		private const double TIMER_INITIAL_SPEED = 1000d / 15d;
+
 		private bool _simulationCalculating;
-		private const double TimerInitialSpeed = 1000d / 15d;
 		private Timer _timer;
+
+		private readonly byte[] _worldArray = new byte[512*512];
 
 		public MainWindow()
 		{
@@ -105,7 +112,7 @@ namespace GameOfLifeWPF
 			this.ButtonStop_Click(null, null);
 		}
 
-		private void ResizeHelper(int newSize)
+		private void ResizeAndRandomize(ushort newSize)
 		{
 			this.GoL.Resize(newSize);
 			this.GoL.Randomize();
@@ -127,12 +134,10 @@ namespace GameOfLifeWPF
 
 		private void UpdateImage()
 		{
-			var arr = new byte[this.GoL.TotalCells];
-
 			for (var i = 0; i < this.GoL.TotalCells; i++)
 			{
 				var val = this.GoL.World[i] ? 255 : 0;
-				arr[i] = (byte)val;
+				this._worldArray[i] = (byte)val;
 			}
 
 			// this prevents crashes during app shutdown
@@ -143,7 +148,7 @@ namespace GameOfLifeWPF
 			// so we'll have to manually re-route this to the main thread
 			Application.Current.Dispatcher.Invoke(() =>
 			{
-				var bs = BitmapSource.Create(this.GoL.Size, this.GoL.Size, 96, 96, PixelFormats.Gray8, null, arr, this.GoL.Size);
+				var bs = BitmapSource.Create(this.GoL.Size.Width, this.GoL.Size.Height, 96, 96, PixelFormats.Gray8, null, this._worldArray, this.GoL.Size.Width);
 				this.GOLSource = bs;
 			});
 		}
@@ -154,7 +159,7 @@ namespace GameOfLifeWPF
 
 		private void ButtonStart_Click(object sender, RoutedEventArgs e)
 		{
-			this._timer = new Timer(this.SimulationStep, true, 0, (int)(TimerInitialSpeed / this.SimSpeedFactor));
+			this._timer = new Timer(this.SimulationStep, true, 0, (int)(TIMER_INITIAL_SPEED / this.SimSpeedFactor));
 			this.SimulationRunning = true;
 		}
 
@@ -235,7 +240,7 @@ namespace GameOfLifeWPF
 				}
 
 				// Update canvas size and GameOfLife board
-				this.CanvasSize = bitmap.PixelWidth;
+				this.CanvasSize = (ushort)bitmap.PixelWidth;
 				this.GoL.World = golArray;
 				this.UpdateImage();
 			}
@@ -298,7 +303,7 @@ namespace GameOfLifeWPF
 				return;
 
 			bool newCellState;
-			var maxCoordVal = this.GoL.Size - 1;
+			var maxCoordVal = this.GoL.Size.Width - 1; // Using .Width here because in this scenario, height and width are the same
 
 			if (e.LeftButton == MouseButtonState.Pressed && e.RightButton == MouseButtonState.Released)
 				newCellState = true;
@@ -311,7 +316,7 @@ namespace GameOfLifeWPF
 			}
 
 			var canvasPoint = e.GetPosition((Canvas)sender);
-			var scaleDivisor = ((Canvas)sender).ActualWidth / this.GoL.Size;
+			var scaleDivisor = ((Canvas)sender).ActualWidth / this.GoL.Size.Width; // see above
 			var canvasX = (int)Math.Floor(canvasPoint.X / scaleDivisor);
 			var canvasY = (int)Math.Floor(canvasPoint.Y / scaleDivisor);
 

@@ -16,7 +16,7 @@ namespace GameOfLifeConsole
 
 			Console.WriteLine();
 
-			int FPS = 15;
+			var fps = 15;
 
 			object[][] title = {
 				new object[] { 0, 1, 1, 0, 0, 2, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0,   0, 0,       0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1 },
@@ -73,7 +73,7 @@ namespace GameOfLifeConsole
 
 			var size = input.InputInt32("Enter desired board size", 16, 32);
 
-			var gol = new GameOfLife(size);
+			var gol = new GameOfLife((ushort)size);
 			gol.Randomize();
 
 			var paused = false;
@@ -83,13 +83,13 @@ namespace GameOfLifeConsole
 				Console.Clear();
 				sb.Clear();
 
-				sb.AppendLine(cornerNW + $" Gen. {gol.Generation} ({gol.ActiveCells}/{gol.TotalCells}, {FPS} SPS) ".PadBoth((gol.Size) * 2, lineHorz) + cornerNE);
-				for (var y = 0; y < gol.Size; y++)
+				sb.AppendLine(cornerNW + $" Gen. {gol.Generation} ({gol.ActiveCells}/{gol.TotalCells}, {fps} SPS) ".PadBoth(gol.Size.Width * 2, lineHorz) + cornerNE);
+				for (var y = 0; y < gol.Size.Height; y++)
 				{
 					sb.Append(lineVert);
-					for (var x = 0; x < gol.Size; x++)
+					for (var x = 0; x < gol.Size.Width; x++)
 					{
-						var idx = y * gol.Size + x;
+						var idx = y * gol.Size.Width + x;
 						var nextStr = gol.World[idx] ? block : " ";
 						sb.Append(nextStr + nextStr);
 					}
@@ -98,7 +98,7 @@ namespace GameOfLifeConsole
 				}
 
 				var pauseBanner = paused ? " (PAUSED) " : "";
-				sb.AppendLine(cornerSW + pauseBanner.PadBoth((gol.Size) * 2, lineHorz) + cornerSE);
+				sb.AppendLine(cornerSW + pauseBanner.PadBoth((gol.Size.Width) * 2, lineHorz) + cornerSE);
 				Console.Write(sb);
 
 				if (Console.KeyAvailable || paused)
@@ -135,7 +135,7 @@ namespace GameOfLifeConsole
 						var speedPrompt = string.Join("\n", speedPromptArr);
 
 						Console.Clear();
-						FPS = input.InputInt32(speedPrompt, 1, 30);
+						fps = input.InputInt32(speedPrompt, 1, 30);
 						continue;
 					}
 
@@ -154,7 +154,7 @@ namespace GameOfLifeConsole
 				gol.UpdateAsync().Wait();
 
 				// Make sure the app runs at FPS steps per second
-				Thread.Sleep(1000 / FPS);
+				Thread.Sleep(1000 / fps);
 			}
 		}
 	}
