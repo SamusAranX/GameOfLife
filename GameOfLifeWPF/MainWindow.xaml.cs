@@ -136,8 +136,8 @@ namespace GameOfLifeWPF
 		{
 			for (var i = 0; i < this.GoL.TotalCells; i++)
 			{
-				var val = this.GoL.World[i] ? 255 : 0;
-				this._worldArray[i] = (byte)val;
+				var val = this.GoL.World[i] ? byte.MaxValue : byte.MinValue;
+				this._worldArray[i] = val;
 			}
 
 			// this prevents crashes during app shutdown
