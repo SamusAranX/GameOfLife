@@ -1,4 +1,5 @@
-﻿namespace GameOfLifeWPF
-{
+﻿namespace GameOfLifeWPF {
+
 	public partial class App { }
+
 }

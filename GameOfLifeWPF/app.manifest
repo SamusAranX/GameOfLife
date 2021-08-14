@@ -5,17 +5,17 @@
 		<security>
 			<requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
 				<!-- UAC Manifest Options
-             If you want to change the Windows User Account Control level replace the 
-             requestedExecutionLevel node with one of the following.
+			 If you want to change the Windows User Account Control level replace the 
+			 requestedExecutionLevel node with one of the following.
 
-        <requestedExecutionLevel  level="asInvoker" uiAccess="false" />
-        <requestedExecutionLevel  level="requireAdministrator" uiAccess="false" />
-        <requestedExecutionLevel  level="highestAvailable" uiAccess="false" />
+		<requestedExecutionLevel  level="asInvoker" uiAccess="false" />
+		<requestedExecutionLevel  level="requireAdministrator" uiAccess="false" />
+		<requestedExecutionLevel  level="highestAvailable" uiAccess="false" />
 
-            Specifying requestedExecutionLevel element will disable file and registry virtualization. 
-            Remove this element if your application requires this virtualization for backwards
-            compatibility.
-        -->
+			Specifying requestedExecutionLevel element will disable file and registry virtualization. 
+			Remove this element if your application requires this virtualization for backwards
+			compatibility.
+		-->
 				<requestedExecutionLevel level="asInvoker" uiAccess="false" />
 			</requestedPrivileges>
 		</security>
@@ -24,8 +24,8 @@
 	<compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
 		<application>
 			<!-- A list of the Windows versions that this application has been tested on and is
-           is designed to work with. Uncomment the appropriate elements and Windows will 
-           automatically selected the most compatible environment. -->
+		   is designed to work with. Uncomment the appropriate elements and Windows will 
+		   automatically selected the most compatible environment. -->
 
 			<!-- Windows Vista -->
 			<!--<supportedOS Id="{e2011457-1546-43c5-a5fe-008deee3d3f0}" />-->
@@ -46,21 +46,21 @@
 	</compatibility>
 
 	<!-- Indicates that the application is DPI-aware and will not be automatically scaled by Windows at higher
-       DPIs. Windows Presentation Foundation (WPF) applications are automatically DPI-aware and do not need 
-       to opt in. Windows Forms applications targeting .NET Framework 4.6 that opt into this setting, should 
-       also set the 'EnableWindowsFormsHighDpiAutoResizing' setting to 'true' in their app.config. -->
+	   DPIs. Windows Presentation Foundation (WPF) applications are automatically DPI-aware and do not need 
+	   to opt in. Windows Forms applications targeting .NET Framework 4.6 that opt into this setting, should 
+	   also set the 'EnableWindowsFormsHighDpiAutoResizing' setting to 'true' in their app.config. -->
 	<!--
   <application xmlns="urn:schemas-microsoft-com:asm.v3">
-    <windowsSettings>
-      <dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true</dpiAware>
-    </windowsSettings>
+	<windowsSettings>
+	  <dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true</dpiAware>
+	</windowsSettings>
   </application>
   -->
 	<application xmlns="urn:schemas-microsoft-com:asm.v3">
 		<windowsSettings>
 			<!-- The combination of below two tags have the following effect : 
-      1) Per-Monitor for >= RS1 (Windows 10 Anniversary Update)
-      2) System < RS1 -->
+	  1) Per-Monitor for >= RS1 (Windows 10 Anniversary Update)
+	  2) System < RS1 -->
 			<dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitor</dpiAwareness>
 			<dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true</dpiAware>
 		</windowsSettings>
@@ -76,7 +76,7 @@
 				processorArchitecture="*"
 				publicKeyToken="6595b64144ccf1df"
 				language="*"
-        />
+		/>
 		</dependentAssembly>
 	</dependency>
 

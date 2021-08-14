@@ -18,12 +18,13 @@
 				<Image Source="{Binding GOLSource}"
 					   RenderOptions.BitmapScalingMode="NearestNeighbor">
 					<Image.Effect>
-						<DropShadowEffect BlurRadius="8" Color="Black" RenderingBias="Quality" Direction="270" ShadowDepth="2" Opacity="0.66" />
+						<DropShadowEffect BlurRadius="8" Color="Black" RenderingBias="Quality" Direction="270" ShadowDepth="2"
+										  Opacity="0.66" />
 					</Image.Effect>
 				</Image>
-				<Canvas x:Name="GOLCanvas" Background="#01FFFFFF" 
-							MouseDown="GOLCanvas_MouseDown" MouseUp="GOLCanvas_MouseUp"
-							MouseMove="GOLCanvas_MouseMove" />
+				<Canvas x:Name="GOLCanvas" Background="#01FFFFFF"
+						MouseDown="GOLCanvas_MouseDown" MouseUp="GOLCanvas_MouseUp"
+						MouseMove="GOLCanvas_MouseMove" />
 			</Grid>
 		</Border>
 
@@ -46,7 +47,7 @@
 					<ColumnDefinition />
 				</Grid.ColumnDefinitions>
 
-				<Border Grid.Column="0" Background="Black" CornerRadius="4" 
+				<Border Grid.Column="0" Background="Black" CornerRadius="4"
 						Width="135" Height="24"
 						HorizontalAlignment="Center" VerticalAlignment="Center">
 					<TextBlock TextAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="14">
@@ -71,14 +72,14 @@
 					<CheckBox Content="Wrap Around" IsChecked="{Binding GoL.WrapAround}"
 							  IsEnabled="{Binding SimulationRunning, Converter={StaticResource InvertBoolConv}}"
 							  FontSize="14" FontWeight="Medium" Foreground="White" Padding="3,0,0,0"
-							  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" 
+							  HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
 							  HorizontalAlignment="Center" VerticalAlignment="Center" />
 				</Border>
-				
+
 			</Grid>
 
 			<Label Grid.Row="1" Content="Size" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" />
-			<Slider x:Name="SizeSlider" Grid.Column="1" Grid.Row="1" 
+			<Slider x:Name="SizeSlider" Grid.Column="1" Grid.Row="1"
 					VerticalAlignment="Center" IsSnapToTickEnabled="True" TickPlacement="BottomRight"
 					LargeChange="8" SmallChange="2" MouseWheel="SizeSlider_Scroll"
 					Maximum="512" Minimum="8" TickFrequency="2"
@@ -89,19 +90,19 @@
 
 			<Label Grid.Row="2" Content="Speed" HorizontalContentAlignment="Center" />
 			<Slider x:Name="SpeedSlider" Grid.Column="1" Grid.Row="2" Delay="100"
-				VerticalAlignment="Center" IsSnapToTickEnabled="True" TickPlacement="BottomRight"
-				LargeChange="1" SmallChange="0.25" MouseWheel="SizeSlider_Scroll"
-				Maximum="8" Minimum="0.25" TickFrequency="0.25"
-				Value="{Binding SimSpeedFactor, FallbackValue=2}" />
-			<Label Grid.Column="2" Grid.Row="2" HorizontalContentAlignment="Center" 
-				Content="{Binding ElementName=SpeedSlider, Path=Value}" ContentStringFormat="{}{0:N2}×" />
+					VerticalAlignment="Center" IsSnapToTickEnabled="True" TickPlacement="BottomRight"
+					LargeChange="1" SmallChange="0.25" MouseWheel="SizeSlider_Scroll"
+					Maximum="8" Minimum="0.25" TickFrequency="0.25"
+					Value="{Binding SimSpeedFactor, FallbackValue=2}" />
+			<Label Grid.Column="2" Grid.Row="2" HorizontalContentAlignment="Center"
+				   Content="{Binding ElementName=SpeedSlider, Path=Value}" ContentStringFormat="{}{0:N2}×" />
 		</Grid>
 
 		<Grid TextOptions.TextRenderingMode="Grayscale">
 			<Grid.RowDefinitions>
 				<RowDefinition Height="32" />
 				<RowDefinition Height="4" />
-				<RowDefinition Height="32"/>
+				<RowDefinition Height="32" />
 				<RowDefinition Height="4" />
 				<RowDefinition Height="32" />
 			</Grid.RowDefinitions>
@@ -115,26 +116,26 @@
 					<ColumnDefinition />
 				</Grid.ColumnDefinitions>
 
-				<Button Grid.Column="0" Click="ButtonStart_Click" 
+				<Button Grid.Column="0" Click="ButtonStart_Click"
 						IsEnabled="{Binding SimulationRunning, Converter={StaticResource InvertBoolConv}}">
 					<StackPanel Orientation="Horizontal">
-						<TextBlock FontFamily="Segoe MDL2 Assets" FontSize="16" Text="&#xE768;" 
+						<TextBlock FontFamily="Segoe MDL2 Assets" FontSize="16" Text="&#xE768;"
 								   Margin="0,0,4,0" VerticalAlignment="Center" />
 						<TextBlock Text="Start" VerticalAlignment="Center" />
 					</StackPanel>
 				</Button>
-				<Button Grid.Column="2" Click="ButtonStep_Click" 
+				<Button Grid.Column="2" Click="ButtonStep_Click"
 						IsEnabled="{Binding SimulationRunning, Converter={StaticResource InvertBoolConv}}">
 					<StackPanel Orientation="Horizontal">
-						<TextBlock FontFamily="Segoe MDL2 Assets" FontSize="16" Text="&#xE76C;" 
+						<TextBlock FontFamily="Segoe MDL2 Assets" FontSize="16" Text="&#xE76C;"
 								   Margin="0,0,4,0" VerticalAlignment="Center" />
 						<TextBlock Text="Step" VerticalAlignment="Center" />
 					</StackPanel>
 				</Button>
-				<Button Grid.Column="4" Click="ButtonStop_Click" 
+				<Button Grid.Column="4" Click="ButtonStop_Click"
 						IsEnabled="{Binding SimulationRunning}">
 					<StackPanel Orientation="Horizontal">
-						<TextBlock FontFamily="Segoe MDL2 Assets" FontSize="16" Text="&#xE769;" 
+						<TextBlock FontFamily="Segoe MDL2 Assets" FontSize="16" Text="&#xE769;"
 								   Margin="0,0,4,0" VerticalAlignment="Center" />
 						<TextBlock Text="Pause" VerticalAlignment="Center" />
 					</StackPanel>
@@ -148,18 +149,18 @@
 					<ColumnDefinition />
 				</Grid.ColumnDefinitions>
 
-				<Button Grid.Column="0" Click="ButtonRandomize_Click" 
+				<Button Grid.Column="0" Click="ButtonRandomize_Click"
 						IsEnabled="{Binding SimulationRunning, Converter={StaticResource InvertBoolConv}}">
 					<StackPanel Orientation="Horizontal">
-						<TextBlock FontFamily="Segoe MDL2 Assets" FontSize="16" Text="&#xE8B1;" 
+						<TextBlock FontFamily="Segoe MDL2 Assets" FontSize="16" Text="&#xE8B1;"
 								   Margin="0,0,4,0" VerticalAlignment="Center" />
 						<TextBlock Text="Randomize Board" VerticalAlignment="Center" />
 					</StackPanel>
 				</Button>
-				<Button Grid.Column="2" Click="ButtonClear_Click" 
+				<Button Grid.Column="2" Click="ButtonClear_Click"
 						IsEnabled="{Binding SimulationRunning, Converter={StaticResource InvertBoolConv}}">
 					<StackPanel Orientation="Horizontal">
-						<TextBlock FontFamily="Segoe MDL2 Assets" FontSize="16" Text="&#xE75C;" 
+						<TextBlock FontFamily="Segoe MDL2 Assets" FontSize="16" Text="&#xE75C;"
 								   Margin="0,0,4,0" VerticalAlignment="Center" />
 						<TextBlock Text="Clear Board" VerticalAlignment="Center" />
 					</StackPanel>
@@ -173,18 +174,18 @@
 					<ColumnDefinition />
 				</Grid.ColumnDefinitions>
 
-				<Button Grid.Column="0" Click="ButtonImport_Click" 
+				<Button Grid.Column="0" Click="ButtonImport_Click"
 						IsEnabled="{Binding SimulationRunning, Converter={StaticResource InvertBoolConv}}">
 					<StackPanel Orientation="Horizontal">
-						<TextBlock FontFamily="Segoe MDL2 Assets" FontSize="16" Text="&#xE8E5;" 
+						<TextBlock FontFamily="Segoe MDL2 Assets" FontSize="16" Text="&#xE8E5;"
 								   Margin="0,0,4,0" VerticalAlignment="Center" />
 						<TextBlock Text="Import Image" VerticalAlignment="Center" />
 					</StackPanel>
 				</Button>
-				<Button Grid.Column="2" Click="ButtonExport_Click" 
+				<Button Grid.Column="2" Click="ButtonExport_Click"
 						IsEnabled="{Binding SimulationRunning, Converter={StaticResource InvertBoolConv}}">
 					<StackPanel Orientation="Horizontal">
-						<TextBlock FontFamily="Segoe MDL2 Assets" FontSize="16" Text="&#xE74E;" 
+						<TextBlock FontFamily="Segoe MDL2 Assets" FontSize="16" Text="&#xE74E;"
 								   Margin="0,0,4,0" VerticalAlignment="Center" />
 						<TextBlock Text="Export Image" VerticalAlignment="Center" />
 					</StackPanel>

@@ -10,8 +10,8 @@ using System.Windows;
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("GameOfLifeWPF")]
-[assembly: AssemblyCopyright("Copyright © Peter Wunder 2018 – 2019")]
+[assembly: AssemblyProduct("Game of Life (WPF)")]
+[assembly: AssemblyCopyright("Copyright © Peter Wunder 2018 – 2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
