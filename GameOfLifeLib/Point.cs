@@ -1,10 +1,10 @@
 ﻿namespace GameOfLifeLib {
 
 	/* Compatibility shim since System.Windows isn't a thing here */
-	public struct Point {
+	public readonly struct Point {
 
-		public int X;
-		public int Y;
+		public readonly int X;
+		public readonly int Y;
 
 		public Point(int x, int y) {
 			this.X = x;

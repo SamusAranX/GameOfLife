@@ -7,9 +7,8 @@ namespace GameOfLifeLib {
 
 		public static int InputInt32(string prompt = "", int min = int.MinValue, int max = int.MaxValue) {
 			if (prompt.Trim() != "") {
-				if (min != int.MinValue && max != int.MaxValue) {
+				if (min != int.MinValue && max != int.MaxValue)
 					prompt += $" ({min}-{max})";
-				}
 
 				Console.WriteLine(prompt);
 			}
@@ -32,7 +31,7 @@ namespace GameOfLifeLib {
 			if (prompt.Trim() != "")
 				Console.WriteLine(prompt);
 
-			bool valid = false;
+			var valid = false;
 			var inputPoint = new Point(0, 0);
 			do {
 				var input = Console.ReadLine();

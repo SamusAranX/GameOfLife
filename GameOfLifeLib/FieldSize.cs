@@ -1,9 +1,9 @@
 ﻿namespace GameOfLifeLib {
 
-	public struct FieldSize {
+	public readonly struct FieldSize {
 
-		public ushort Width;
-		public ushort Height;
+		public readonly ushort Width;
+		public readonly ushort Height;
 
 		public FieldSize(ushort width, ushort height) {
 			this.Width = width;
