@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 
-namespace GameOfLifeLib
-{
-	public static class InputExtensions
-	{
-		public static int InputInt32(string prompt = "", int min = int.MinValue, int max = int.MaxValue)
-		{
-			if (prompt.Trim() != "")
-			{
-				if (min != int.MinValue && max != int.MaxValue)
-				{
+namespace GameOfLifeLib {
+
+	public static class InputExtensions {
+
+		public static int InputInt32(string prompt = "", int min = int.MinValue, int max = int.MaxValue) {
+			if (prompt.Trim() != "") {
+				if (min != int.MinValue && max != int.MaxValue) {
 					prompt += $" ({min}-{max})";
 				}
 
@@ -19,8 +16,7 @@ namespace GameOfLifeLib
 
 			bool parsed;
 			int inputInt;
-			do
-			{
+			do {
 				var input = Console.ReadLine();
 				parsed = int.TryParse(input, out inputInt);
 				if (!parsed)
@@ -32,21 +28,17 @@ namespace GameOfLifeLib
 			return inputInt;
 		}
 
-		public static Point InputPoint(string prompt = "")
-		{
+		public static Point InputPoint(string prompt = "") {
 			if (prompt.Trim() != "")
 				Console.WriteLine(prompt);
 
 			bool valid = false;
 			var inputPoint = new Point(0, 0);
-			do
-			{
+			do {
 				var input = Console.ReadLine();
-				if (input != null)
-				{
+				if (input != null) {
 					var match = Regex.Match(input, "(\\d+)\\D+(\\d+)");
-					if (match.Success)
-					{
+					if (match.Success) {
 						var x = int.Parse(match.Groups[1].Value);
 						var y = int.Parse(match.Groups[2].Value);
 
@@ -64,4 +56,5 @@ namespace GameOfLifeLib
 		}
 
 	}
+
 }
