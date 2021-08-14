@@ -8,6 +8,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameOfLifeConsole", "GameOf
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameOfLifeWPF", "GameOfLifeWPF\GameOfLifeWPF.csproj", "{5BE8796F-0AF9-4F69-9F1E-7C7113A261EA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{52B058C8-E981-4369-9FA3-224C61AA08E5}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
