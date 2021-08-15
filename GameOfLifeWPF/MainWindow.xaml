@@ -61,9 +61,9 @@
 						HorizontalAlignment="Center" VerticalAlignment="Center">
 					<TextBlock TextAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="14">
 						<Run>Active:</Run>
-						<Run FontWeight="Medium" Text="{Binding GoL.ActiveCells, Mode=OneWay, FallbackValue=250000}" />
+						<Run FontWeight="Medium" Text="{Binding GoL.ActiveCells, Mode=OneWay, FallbackValue=65536}" />
 						<Run>/</Run>
-						<Run Text="{Binding GoL.TotalCells, Mode=OneWay, FallbackValue=654535}" />
+						<Run Text="{Binding GoL.TotalCells, Mode=OneWay, FallbackValue=262144}" />
 					</TextBlock>
 				</Border>
 
@@ -81,7 +81,7 @@
 			<Label Grid.Row="1" Content="Size" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" />
 			<Slider x:Name="SizeSlider" Grid.Column="1" Grid.Row="1"
 					VerticalAlignment="Center" IsSnapToTickEnabled="True" TickPlacement="BottomRight"
-					LargeChange="8" SmallChange="2" MouseWheel="SizeSlider_Scroll"
+					LargeChange="8" SmallChange="2" MouseWheel="Slider_Scroll"
 					Maximum="512" Minimum="8" TickFrequency="2"
 					Value="{Binding CanvasSize, FallbackValue=128}"
 					IsEnabled="{Binding SimulationRunning, Converter={StaticResource InvertBoolConv}}" />
@@ -91,7 +91,7 @@
 			<Label Grid.Row="2" Content="Speed" HorizontalContentAlignment="Center" />
 			<Slider x:Name="SpeedSlider" Grid.Column="1" Grid.Row="2" Delay="100"
 					VerticalAlignment="Center" IsSnapToTickEnabled="True" TickPlacement="BottomRight"
-					LargeChange="1" SmallChange="0.25" MouseWheel="SizeSlider_Scroll"
+					LargeChange="1" SmallChange="0.25" MouseWheel="Slider_Scroll"
 					Maximum="8" Minimum="0.25" TickFrequency="0.25"
 					Value="{Binding SimSpeedFactor, FallbackValue=2}" />
 			<Label Grid.Column="2" Grid.Row="2" HorizontalContentAlignment="Center"

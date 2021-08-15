@@ -9,12 +9,6 @@ namespace GameOfLifeLib {
 
 	public sealed class GameOfLife : INotifyPropertyChanged {
 
-		private readonly Point[] _offsets = {
-			new(-1, -1), new(0, -1), new(1, -1),
-			new(-1, 0), new(1, 0),
-			new(-1, 1), new(0, 1), new(1, 1),
-		};
-
 		private int _generation;
 		private bool[] _nextGen;
 
@@ -50,11 +44,6 @@ namespace GameOfLifeLib {
 			}
 		}
 
-		private bool[] NextGen {
-			get => this._nextGen;
-			set => this.SetField(ref this._nextGen, value);
-		}
-
 		public bool WrapAround { get; set; }
 
 		public int TotalCells => this.Size.Width * this.Size.Height;
@@ -63,7 +52,7 @@ namespace GameOfLifeLib {
 
 		public void Reset() {
 			this.World = new bool[this.TotalCells];
-			this.NextGen = new bool[this.TotalCells];
+			this._nextGen = new bool[this.TotalCells];
 
 			this.Generation = 1;
 		}
@@ -96,31 +85,28 @@ namespace GameOfLifeLib {
 		}
 
 		private bool GetWorldCell(int x, int y) {
-			return this.World[(y * this.Size.Width) + x];
-		}
-
-		private void SetCell(Point p, bool newValue, bool nextGen = false, bool propertyChanged = true) {
-			var idx = (p.Y * this.Size.Width) + p.X;
-
-			if (nextGen)
-				this.NextGen[idx] = newValue;
-			else
-				this.World[idx] = newValue;
-
-			if (propertyChanged)
-				this.OnPropertyChanged(nameof(this.ActiveCells));
+			return this._world[(y * this.Size.Width) + x];
 		}
 
 		public void SetCell(int x, int y, bool newValue, bool nextGen = false, bool propertyChanged = true) {
-			var p = new Point(x, y);
-			this.SetCell(p, newValue, nextGen, propertyChanged);
+			var idx = (y * this.Size.Width) + x;
+
+			if (nextGen)
+				this._nextGen[idx] = newValue;
+			else
+				this._world[idx] = newValue;
+
+			if (propertyChanged) {
+				this.OnPropertyChanged(nameof(this.ActiveCells));
+				this.OnPropertyChanged(nameof(this.World));
+			}
 		}
 
 		public void ToggleCell(Point p, bool nextGen = false) {
 			var idx = (p.Y * this.Size.Width) + p.X;
 
 			if (nextGen)
-				this.NextGen[idx] = !this.NextGen[idx];
+				this._nextGen[idx] = !this._nextGen[idx];
 			else
 				this.World[idx] = !this.World[idx];
 
@@ -155,10 +141,26 @@ namespace GameOfLifeLib {
 			var y = idx / this.Size.Width;
 
 			byte neighbors = 0;
-			foreach (var o in this._offsets) {
-				if (this.IsNeighborAlive(x, y, o.X, o.Y))
-					neighbors++;
-			}
+
+			// check for all 8 neighbors
+			if (this.IsNeighborAlive(x, y, -1, -1))
+				neighbors++;
+			if (this.IsNeighborAlive(x, y, 0, -1))
+				neighbors++;
+			if (this.IsNeighborAlive(x, y, 1, -1))
+				neighbors++;
+
+			if (this.IsNeighborAlive(x, y, -1, 0))
+				neighbors++;
+			if (this.IsNeighborAlive(x, y, 1, 0))
+				neighbors++;
+
+			if (this.IsNeighborAlive(x, y, -1, 1))
+				neighbors++;
+			if (this.IsNeighborAlive(x, y, 0, 1))
+				neighbors++;
+			if (this.IsNeighborAlive(x, y, 1, 1))
+				neighbors++;
 
 			var isAlive = this.GetWorldCell(x, y);
 
@@ -171,18 +173,19 @@ namespace GameOfLifeLib {
 			// Rule 4: Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
 			stillAlive |= !isAlive && neighbors == 3;
 
-			this.SetCell(new Point(x, y), stillAlive, true, false);
+			this.SetCell(x, y, stillAlive, true, false);
 		}
 
 		public async Task UpdateAsync() {
 			await Task.Factory.StartNew(() => {
 				_ = Parallel.For(0, this.TotalCells, this.GenerationStep);
 			});
+
+			Buffer.BlockCopy(this._nextGen, 0, this._world, 0, this._world.Length);
+
 			this.Generation++;
-
+			this.OnPropertyChanged(nameof(this.World));
 			this.OnPropertyChanged(nameof(this.ActiveCells));
-
-			(this.NextGen, this.World) = (this.World, this.NextGen);
 		}
 
 		#region INotifyPropertyChanged

@@ -104,9 +104,8 @@ namespace GameOfLifeWPF {
 		}
 
 		private void UpdateImage() {
-			for (var i = 0; i < this.GoL.TotalCells; i++) {
-				var val = this.GoL.World[i] ? byte.MaxValue : byte.MinValue;
-				this._worldArray[i] = val;
+			for (var i = 0; i < this.GoL.World.Length; i++) {
+				this._worldArray[i] = this.GoL.World[i] ? byte.MaxValue : byte.MinValue;
 			}
 
 			// this prevents crashes during app shutdown
@@ -279,7 +278,8 @@ namespace GameOfLifeWPF {
 
 			this.GoL.SetCell(canvasX, canvasY, newCellState);
 
-			this.UpdateImage();
+			if (!this.SimulationRunning)
+				this.UpdateImage();
 		}
 
 		//
@@ -287,7 +287,7 @@ namespace GameOfLifeWPF {
 		//
 
 		// Enables changing slider values by scrolling
-		private void SizeSlider_Scroll(object sender, MouseWheelEventArgs e) {
+		private void Slider_Scroll(object sender, MouseWheelEventArgs e) {
 			var slider = (Slider)sender;
 			var sign = Math.Sign(e.Delta);
 
