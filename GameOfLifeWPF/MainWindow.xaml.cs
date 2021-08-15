@@ -164,12 +164,17 @@ namespace GameOfLifeWPF {
 
 			var dialogShown = ofd.ShowDialog();
 			if (dialogShown.HasValue && dialogShown.Value) {
-				BitmapSource bitmap = new BitmapImage(new Uri(ofd.FileName));
+				BitmapSource bitmap;
+				try {
+					bitmap = new BitmapImage(new Uri(ofd.FileName));
+				} catch (NotSupportedException) {
+					_ = MessageBox.Show("The file needs to be a valid image.");
+					return;
+				}
 
 				if (bitmap.PixelWidth != bitmap.PixelHeight) {
 					// Image needs to be square
 					_ = MessageBox.Show("The image needs to be square.");
-
 					return;
 				}
 
